@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <AssemblyName>MagicDefor.Revit</AssemblyName>
+    <RootNamespace>MagicDefor.Revit</RootNamespace>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <BaseOutputPath>C:\Users\ashishpundir\source\repos\Magic_Defor\build\MagicDefor.Revit\</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)</OutputPath>
+    <BaseIntermediateOutputPath>$(LOCALAPPDATA)\MagicDefor\build-obj\MagicDefor.Revit\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+    <RevitVersion>2023</RevitVersion>
+    <RevitInstallDir>C:\Program Files\Autodesk\Revit $(RevitVersion)</RevitInstallDir>
+    <RevitAddinsDir>$(APPDATA)\Autodesk\Revit\Addins\$(RevitVersion)</RevitAddinsDir>
+    <AddinManifestName>MagicDefor.LiveFilter.addin</AddinManifestName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>$(RevitInstallDir)\RevitAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(RevitInstallDir)\RevitAPIUI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Remove="App.xaml" />
+    <Page Include="Views\LiveFilterWindow.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Addin\$(AddinManifestName)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="CopyAddinFiles" AfterTargets="Build">
+    <MakeDir Directories="$(RevitAddinsDir)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Addin\$(AddinManifestName)" DestinationFolder="$(RevitAddinsDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>
