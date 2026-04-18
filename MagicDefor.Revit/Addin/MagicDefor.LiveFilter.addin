@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>DEFOR Live Filter</Name>
+    <Assembly>C:\Users\ashishpundir\source\repos\Magic_Defor\build\MagicDefor.Revit\MagicDefor.Revit.dll</Assembly>
+    <AddInId>9C1A4B25-2D9F-4984-A165-4E574F31EE10</AddInId>
+    <FullClassName>MagicDefor.Revit.App</FullClassName>
+    <VendorId>MDEF</VendorId>
+    <VendorDescription>DEFOR advanced live filter tools for Revit.</VendorDescription>
+  </AddIn>
+</RevitAddIns>
