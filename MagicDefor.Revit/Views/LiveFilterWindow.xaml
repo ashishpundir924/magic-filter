@@ -1,0 +1,235 @@
+<Window x:Class="MagicDefor.Revit.Views.LiveFilterWindow"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:MagicDefor.Revit.ViewModels"
+        mc:Ignorable="d"
+        Title="DEFOR Live Filter"
+        Height="860"
+        Width="940"
+        MinHeight="760"
+        MinWidth="860"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        Background="#FFF4F0E6">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <HierarchicalDataTemplate DataType="{x:Type viewModels:SelectionScopeNodeViewModel}" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox IsThreeState="True"
+                          IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          VerticalAlignment="Center" />
+                <TextBlock Text="{Binding DisplayName}" Margin="8,0,0,0" VerticalAlignment="Center" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        <Style TargetType="{x:Type TreeViewItem}">
+            <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="1.25*" MinHeight="260" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Padding="16" CornerRadius="16" Background="#FF173B45">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="DEFOR Live Filter" Foreground="White" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Foreground="#FFD9EAED"
+                               Text="Select source elements in Revit first, then read categories, families, and types to build production-ready filters with mixed AND and OR logic." />
+                </StackPanel>
+
+                <Button Grid.Column="1" Content="Read Selection" Command="{Binding RefreshSelectionCommand}" Padding="18,9" Margin="18,0,0,0" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="0,16,0,0" MinHeight="280">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.6*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="300" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Padding="14" CornerRadius="14" Background="#FFFFFBF4" BorderBrush="#FFD7CCB8" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="Source Scope" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock Margin="0,6,0,10" TextWrapping="Wrap" Foreground="#FF50625C"
+                                   Text="Pick a whole category, or expand it and choose only the families or types you want. The tree scrolls when the selection is large." />
+                    </StackPanel>
+
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding ScopeSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     Padding="8,6"
+                                     ToolTip="Search categories, families, or types" />
+
+                            <WrapPanel Grid.Column="2">
+                                <Button Content="Select All" Command="{Binding SelectAllScopesCommand}" Margin="0,0,8,0" Padding="10,6" />
+                                <Button Content="Clear All" Command="{Binding ClearAllScopesCommand}" Padding="10,6" />
+                            </WrapPanel>
+                        </Grid>
+
+                        <WrapPanel Grid.Row="1" Margin="0,10,0,10">
+                            <Button Content="Expand All" Command="{Binding ExpandAllScopesCommand}" Margin="0,0,8,0" Padding="10,6" />
+                            <Button Content="Collapse All" Command="{Binding CollapseAllScopesCommand}" Padding="10,6" />
+                        </WrapPanel>
+
+                        <Border Grid.Row="2" MinHeight="230" BorderBrush="#FFD7CCB8" BorderThickness="1" CornerRadius="10" Background="White">
+                            <TreeView ItemsSource="{Binding ScopeTree}" BorderThickness="0" Padding="8" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Padding="14" CornerRadius="14" Background="#FFFFFBF4" BorderBrush="#FFD7CCB8" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Saved Configurations" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,6,0,10" Text="Save reusable filter setups for repeated production work." TextWrapping="Wrap" Foreground="#FF50625C" />
+                    <TextBlock Text="Configuration name" FontWeight="SemiBold" />
+                    <TextBox Margin="0,6,0,10" Text="{Binding ConfigurationName, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="Save Current Configuration" Command="{Binding SaveConfigurationCommand}" Padding="10,6" />
+                    <TextBlock Margin="0,14,0,0" Text="Saved list" FontWeight="SemiBold" />
+                    <ComboBox Margin="0,6,0,10" ItemsSource="{Binding SavedConfigurationNames}" SelectedItem="{Binding SelectedConfigurationName}" />
+                    <WrapPanel>
+                        <Button Content="Load" Command="{Binding LoadConfigurationCommand}" MinWidth="90" Margin="0,0,8,0" />
+                        <Button Content="Delete" Command="{Binding DeleteConfigurationCommand}" MinWidth="90" />
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <GridSplitter Grid.Row="2"
+                      Margin="120,4,120,4"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Height="10"
+                      ResizeDirection="Rows"
+                      ResizeBehavior="PreviousAndNext"
+                      Background="#FFE0D0B7"
+                      ShowsPreview="True" />
+
+        <Border Grid.Row="3" Margin="0,0,0,0" Padding="14" CornerRadius="14" Background="#FFFFFBF4" BorderBrush="#FFD7CCB8" BorderThickness="1" MinHeight="260">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="Filter Rules" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Foreground="#FF50625C"
+                                   Text="Each rule after the first can join the previous one with AND or OR, so users can mix logic in the same filter." />
+                    </StackPanel>
+
+                    <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+                        <Button Content="Add Rule" Command="{Binding AddRuleCommand}" MinWidth="90" Margin="0,0,8,0" />
+                        <Button Content="Remove Last" Command="{Binding RemoveRuleCommand}" MinWidth="100" />
+                    </WrapPanel>
+                </Grid>
+
+                <WrapPanel Grid.Row="1" Margin="0,14,0,14">
+                    <CheckBox Content="Limit to active view" IsChecked="{Binding LimitToActiveView}" Margin="0,0,18,0" />
+                    <CheckBox Content="Include element types" IsChecked="{Binding IncludeElementTypes}" />
+                </WrapPanel>
+
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" MinHeight="180">
+                    <ItemsControl ItemsSource="{Binding Rules}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#FFF7F2E7"
+                                            Visibility="{Binding ShowJoinWithPrevious, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <DockPanel LastChildFill="False">
+                                            <TextBlock Text="Join with previous" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,8,0" />
+                                            <ComboBox Width="110" ItemsSource="{Binding LogicOptions}" SelectedItem="{Binding JoinWithPrevious}" />
+                                        </DockPanel>
+                                    </Border>
+
+                                    <Border Margin="0,0,0,10" Padding="12" CornerRadius="12" Background="White" BorderBrush="#FFE0D6C5" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="12" />
+                                                <ColumnDefinition Width="1.2*" />
+                                                <ColumnDefinition Width="12" />
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="12" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="Parameter" FontWeight="SemiBold" />
+                                                <ComboBox Margin="0,6,0,0" ItemsSource="{Binding ParameterOptions}" SelectedItem="{Binding ParameterName}" />
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2">
+                                                <TextBlock Text="Operator" FontWeight="SemiBold" />
+                                                <ComboBox Margin="0,6,0,0" ItemsSource="{Binding OperatorOptions}" SelectedItem="{Binding SelectedOperator}" />
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="4">
+                                                <TextBlock Text="Value" FontWeight="SemiBold" />
+                                                <TextBox Margin="0,6,0,0" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+                                            </StackPanel>
+
+                                            <CheckBox Grid.Column="6" Content="Match case" IsChecked="{Binding MatchCase}" VerticalAlignment="Bottom" Margin="0,0,0,4" />
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <DockPanel Grid.Row="4" Margin="0,16,0,0" LastChildFill="False">
+            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Width="260" Text="{Binding StatusText}" TextWrapping="Wrap" Foreground="#FF415B54" />
+            <WrapPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <Button Content="Apply" Command="{Binding ApplyCommand}" MinWidth="84" Margin="0,0,8,0" />
+                <Button Content="Select" Command="{Binding SelectCommand}" MinWidth="84" Margin="0,0,8,0" />
+                <Button Content="Isolate" Command="{Binding IsolateCommand}" MinWidth="84" Margin="0,0,8,0" />
+                <Button Content="Clear" Command="{Binding ClearCommand}" MinWidth="84" />
+            </WrapPanel>
+        </DockPanel>
+    </Grid>
+</Window>
