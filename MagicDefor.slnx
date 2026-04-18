@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MagicDefor.Revit/MagicDefor.Revit.csproj" />
+  <Project Path="MagicDefor.Installer/MagicDefor.Installer.csproj" />
+</Solution>
